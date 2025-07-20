@@ -2,4 +2,6 @@ import translateTxt from './translate'
 
 import i18n from './i18n'
 
-export { i18n, translateTxt }
+import { useI18n } from 'vue-i18n'
+
+export { i18n, translateTxt, useI18n }
