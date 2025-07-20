@@ -1,6 +1,6 @@
 import type { AxiosInstance, AxiosHeaderValue } from 'axios'
 import axios from 'axios'
-import { AuthenticationManagerService } from '@/modules/api/services'
+import { AuthenticationManagerService, PortfolioService } from '@/modules/api/services'
 import { computed, ref, watch } from 'vue'
 
 // Service URL configuration
@@ -70,6 +70,7 @@ export class ApiClient {
   protected mainAdaptor: AxiosInstance
 
   public authenticationManager: AuthenticationManagerService
+  public portfolio: PortfolioService
 
   constructor(protected readonly baseURL: string) {
     this.adaptors = new Map()
@@ -77,6 +78,7 @@ export class ApiClient {
 
     // Initialize services with their specific adaptors
     this.authenticationManager = new AuthenticationManagerService(this.getAdaptor('authentication'))
+    this.portfolio = new PortfolioService(this.getAdaptor('portfolio'))
   }
 
   protected getAdaptor(serviceName: string): AxiosInstance {
