@@ -1,10 +1,10 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 import routes from './routes'
 import { isMobile } from '@/utils/os'
 import middlewarePipeline from './middleware/middlewarePipeline'
 
 const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [...routes],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {
@@ -22,10 +22,6 @@ const unGuardedRoutes = [...authenticationRoutes, ...openRoutes]
 
 router.beforeEach(async (to, from, next) => {
   try {
-    if (isMobile() && to.name !== 'mobile') {
-      return next({ name: 'mobile' })
-    }
-
     if (!unGuardedRoutes.includes(String(to.name))) {
       // start loading
     }
