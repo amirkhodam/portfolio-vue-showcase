@@ -1,5 +1,10 @@
 {
   "portfolio": {
     "gallery": "View Gallery"
+  },
+  "contact": {
+    "name": "Nom",
+    "email": "E-mail",
+    "message": "Message"
   }
 }
