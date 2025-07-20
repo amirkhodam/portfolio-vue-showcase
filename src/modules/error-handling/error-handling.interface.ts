@@ -10,3 +10,18 @@ export interface IErrorResponse {
   statusCode: number
   error: string
 }
+
+export enum EMessageType {
+  success = 'success',
+  error = 'error',
+  warning = 'warn',
+  info = 'info',
+  secondary = 'secondary',
+  contrast = 'contrast',
+}
+
+export enum EMessageStyle {
+  base = 'base',
+  outline = 'outline',
+  primary = 'primary',
+}

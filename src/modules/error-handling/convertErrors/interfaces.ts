@@ -1,4 +1,4 @@
-import type { ErrorHandlingMessageOptions } from '@/utils/error-handling/ErrorHandlingService'
+import type { ErrorHandlingMessageOptions } from "../ErrorHandlingService"
 
 export type ErrorConversionOptions = {
   inline?: boolean

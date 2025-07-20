@@ -2,7 +2,7 @@ import { I18nErrorTranslator } from './translator'
 import { DefaultErrorFormatter } from './formatter'
 import { StringErrorConverter, MessageErrorConverter, ObjectErrorConverter } from './converters'
 import type { ErrorConverter } from './interfaces'
-import type { ErrorHandlingMessageOptions } from '@/utils/error-handling/ErrorHandlingService'
+import type { ErrorHandlingMessageOptions } from '../ErrorHandlingService'
 
 class ErrorConversionService {
   private converters: ErrorConverter[]

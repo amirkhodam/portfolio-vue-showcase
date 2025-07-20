@@ -1,6 +1,6 @@
 import { i18n } from '@/modules/i18n'
 import type { ErrorTranslator } from './interfaces'
-import type { ErrorHandlingMessageOptions } from '@/utils/error-handling/ErrorHandlingService'
+import type { ErrorHandlingMessageOptions } from '../ErrorHandlingService'
 
 export class I18nErrorTranslator implements ErrorTranslator {
   private readonly prefix = 'general.message.error'

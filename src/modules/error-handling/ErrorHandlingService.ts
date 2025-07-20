@@ -1,6 +1,5 @@
 import { useEventBus } from '@/utils/event-bus/EventBus'
-import { messageType } from '@/components/general/messages/interface'
-import type { IErrorTranslate } from './error-handling.interface'
+import { EMessageType, type IErrorTranslate } from './error-handling.interface'
 import { translator } from './translate/TranslationService'
 
 export type ErrorHandlingStrategy = 'toast' | 'console' | 'silent' | 'translate'
@@ -66,7 +65,7 @@ export class ErrorHandlingService {
 
   private handleToastError(error: any, options: ErrorHandlingOptions): void {
     this.eventBus.emit('toast.add', {
-      severity: options.severity || messageType.error,
+      severity: options.severity || EMessageType.error,
       summary: options.summary || 'Error',
       detail: options.detail || error.translate,
       life: options.life || 5000,
