@@ -1,4 +1,4 @@
-import { useEventBus } from '@/utils/event-bus/EventBus'
+import { useEventBus } from '@/utils/eventBus/EventBus'
 import { EMessageType, type IErrorTranslate } from './error-handling.interface'
 import { translator } from './translate/TranslationService'
 
