@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import DialogCenter from '@/components/dialog/DialogCenter.vue'
+import { EMediaType, type Media } from '@/modules/api'
 
 const props = defineProps<{
   modelValue: boolean
-  images: Array<string>
-  videos: Array<string>
+  medias: Array<Media>
 }>()
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean)
@@ -25,9 +25,9 @@ const lightboxVisible = ref(false)
 const lightboxType = ref<'image' | 'video' | null>(null)
 const lightboxSrc = ref<string>('')
 
-function openLightbox(type: 'image' | 'video', src: string) {
+function openLightbox(type: 'image' | 'video', src: Media) {
   lightboxType.value = type
-  lightboxSrc.value = src
+  lightboxSrc.value = src.path
   lightboxVisible.value = true
 }
 function closeLightbox() {
@@ -42,28 +42,28 @@ function closeLightbox() {
     v-model:visible="visible"
     modal
     :closable="true"
-    class="fixed top-0 left-0 h-screen w-screen bg-white/30 backdrop-blur-md"
+    class="fixed top-0 left-0 bg-white/30 backdrop-blur-md"
   >
     <div class="relative z-50 mx-auto w-full max-w-5xl">
-      <div class="flex flex-wrap justify-center gap-6 py-16 px-8">
-        <template v-for="(img, idx) in images" :key="'img-' + idx">
+      <div class="flex flex-wrap justify-center gap-6 mx-10 my-10">
+        <template v-for="(media, idx) in medias" :key="'img-' + idx">
           <div
+            v-if="media.type === EMediaType.IMAGE"
             class="relative z-0 cursor-pointer overflow-hidden rounded-xl shadow transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-            @click="openLightbox('image', img)"
+            @click="openLightbox('image', media)"
           >
             <img
-              :src="img"
+              :src="media.path"
               class="transition-filter h-56 w-56 rounded-xl object-cover duration-200 hover:brightness-110 hover:saturate-125"
               alt="Gallery image"
             />
           </div>
-        </template>
-        <template v-for="(vid, idx) in videos" :key="'vid-' + idx">
           <div
+            v-else
             class="relative z-0 cursor-pointer overflow-hidden rounded-xl shadow transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-            @click="openLightbox('video', vid)"
+            @click="openLightbox('video', media)"
           >
-            <video :src="vid" class="h-56 w-56 rounded-xl object-cover" muted playsinline />
+            <video :src="media.path" class="h-56 w-56 rounded-xl object-cover" muted playsinline />
             <div class="pointer-events-none absolute inset-0 flex items-center justify-center">
               <span class="text-4xl text-white drop-shadow-lg">▶</span>
             </div>
