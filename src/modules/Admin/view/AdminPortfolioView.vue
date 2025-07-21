@@ -20,18 +20,19 @@
           <span class="font-medium">{{ data.title.en }}</span>
         </template>
       </Column>
-      <Column :header="$t('admin.actions')" style="width: 180px">
+      <Column :header="$t('admin.actions')" class="max-w-24 ">
         <template #body="{ data }">
           <Button
             @click="openEdit(data)"
-            class="mr-2 inline-flex items-center gap-1 text-blue-600 hover:underline"
+            class="mr-2 inline-flex items-center gap-1 hover:underline"
           >
             <i class="pi pi-pencil"></i>
             {{ $t('admin.edit_portfolio') }}
           </Button>
           <Button
             @click="deletePortfolio(data.id)"
-            class="inline-flex items-center gap-1 text-red-600 hover:underline"
+            class="inline-flex items-center gap-1 hover:underline"
+            severity="danger"
           >
             <i class="pi pi-trash"></i>
             {{ $t('admin.delete') }}
