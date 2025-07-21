@@ -48,7 +48,10 @@ function refreshPortfolio(val?: IPortfolio) {
 }
 
 function save() {
-  emit('save', { ...form.value })
+  emit(
+    'save',
+    props.portfolio?.id ? { ...form.value } : { texts: form.value.texts, title: form.value.title }
+  )
 }
 function close() {
   emit('close')

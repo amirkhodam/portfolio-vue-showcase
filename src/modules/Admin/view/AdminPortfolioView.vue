@@ -3,7 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { usePortfolioStore } from '@/modules/Portfolio/store/portfolio.store'
 import PortfolioForm from '@/modules/Admin/components/PortfolioForm.vue'
 import DialogCenter from '@/components/dialog/DialogCenter.vue'
-import type { IPortfolio } from '@/modules/api'
+import type { IPortfolio, IPortfolioCreate } from '@/modules/api'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 import Button from '@/components/button/Button.vue'
@@ -31,8 +31,8 @@ function openEdit(id: string) {
 function closeModal() {
   showModal.value = false
 }
-function savePortfolio(portfolio: IPortfolio) {
-  if (portfolio.id) {
+function savePortfolio(portfolio: IPortfolio | IPortfolioCreate) {
+  if ('id' in portfolio) {
     store.updatePortfolio(portfolio)
   } else {
     store.addPortfolio(portfolio)
@@ -86,7 +86,7 @@ function deletePortfolio(id: string) {
         </template>
       </Column>
     </DataTable>
-    <DialogCenter v-if="selectedPortfolio" v-model:visible="showModal">
+    <DialogCenter v-model:visible="showModal">
       <PortfolioForm :portfolio="selectedPortfolio" @save="savePortfolio" @close="closeModal" />
     </DialogCenter>
   </div>

@@ -2,7 +2,7 @@ import type { ITranslatedString, ITranslatedStrings } from '@/modules/i18n'
 
 export enum EMediaType {
   IMAGE = 'image',
-  VIDEO = 'video',
+  VIDEO = 'video'
 }
 
 export type TMediaType = `${EMediaType}`
@@ -15,13 +15,15 @@ export interface Media {
   type: TMediaType
 }
 
+export interface IPortfolioCreate {
+  title: ITranslatedString
+  texts: ITranslatedStrings
+}
+
 export interface IPortfolioBase {
-  id: string
   title: ITranslatedString
   media: Media[]
   texts: ITranslatedStrings
-  createdAt: Date
-  updatedAt: Date
 }
 
 export type IPortfolioUpdate = IPortfolioBase & {

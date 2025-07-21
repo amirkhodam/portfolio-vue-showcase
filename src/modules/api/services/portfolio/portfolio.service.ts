@@ -1,5 +1,5 @@
 import { Service } from '../service'
-import type { IMediaRemove, IPortfolio, IPortfolioBase, IUploadMedia } from './portfolio.interface'
+import type { IMediaRemove, IPortfolio, IPortfolioBase, IPortfolioCreate, IPortfolioUpdate, IUploadMedia } from './portfolio.interface'
 
 export class PortfolioService extends Service {
   async getPortfolios() {
@@ -10,12 +10,12 @@ export class PortfolioService extends Service {
     return this.get<IPortfolio>(`/portfolios/${id}`)
   }
 
-  async createPortfolio(body: IPortfolioBase) {
-    return this.post<IPortfolio, IPortfolioBase>('/portfolios', body)
+  async createPortfolio(body: IPortfolioCreate) {
+    return this.post<IPortfolio, IPortfolioCreate>('/portfolios', body)
   }
 
-  async updatePortfolio(body: IPortfolioBase) {
-    return this.put<IPortfolio, IPortfolioBase>(`/portfolios/${body.id}`, body)
+  async updatePortfolio(body: IPortfolioUpdate) {
+    return this.put<IPortfolio, IPortfolioUpdate>(`/portfolios/${body.id}`, body)
   }
 
   async patchPortfolio(id: string, body: Partial<IPortfolioBase>) {

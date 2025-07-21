@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { IPortfolio, IPortfolioBase } from '@/modules/api'
+import type { IPortfolio, IPortfolioBase, IPortfolioCreate } from '@/modules/api'
 import { useServices } from '@/modules/api'
 import { errorHandler } from '@/modules/error-handling/ErrorHandlingService'
 
@@ -71,11 +71,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   }
 
-  async function addPortfolio(portfolio: IPortfolioBase) {
-    const newPortfolio = {
-      ...portfolio
-    }
-    await _service.createPortfolio(newPortfolio)
+  async function addPortfolio(portfolio: IPortfolioCreate) {
+    const newPortfolio = await _service.createPortfolio(portfolio)
     portfolios.value.push(newPortfolio)
   }
 
