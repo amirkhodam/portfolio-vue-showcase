@@ -24,10 +24,9 @@
     "edit_contact": "Modifier Contact",
     "add_portfolio": "Ajouter un portfolio",
     "edit_portfolio": "Modifier le portfolio",
-    "title_en": "Titre (EN)",
-    "title_fr": "Titre (FR)",
-    "texts_en": "Textes (EN)",
-    "texts_fr": "Textes (FR)",
+    "title": "Titre",
+    "title_ln": "Titre ({lang})",
+    "texts_ln": "Textes ({lang})",
     "actions": "Actions",
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -36,7 +35,11 @@
     "invalid_credentials": "Nom d'utilisateur ou mot de passe invalide.",
     "email": "E-mail",
     "phone": "Téléphone",
-    "address_en": "Adresse (EN)",
-    "address_fr": "Adresse (FR)"
+    "address_ln": "Adresse ({lang})",
+    "media_label": "Médias (images/vidéos)",
+    "upload_media": "Téléverser des médias",
+    "uploading": "Téléversement...",
+    "existing_media": "Médias existants",
+    "remove": "Retirer"
   }
 }

@@ -1,41 +1,11 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import type { IPortfolio } from '../../api/services/portfolio'
-import { useServices } from '../../api'
-import { errorHandler } from '../../error-handling/ErrorHandlingService'
+import type { IPortfolio, IPortfolioBase } from '@/modules/api'
+import { useServices } from '@/modules/api'
+import { errorHandler } from '@/modules/error-handling/ErrorHandlingService'
 
 export const usePortfolioStore = defineStore('portfolio', () => {
-  const portfolios = ref<Array<IPortfolio>>([
-    {
-      id: '664a1b2c3d4e5f6789012345',
-      title: { en: 'Modern Architecture', fr: 'Architecture Moderne' },
-      videos: ['http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'],
-      images: [
-        'https://blog.architizer.com/wp-content/uploads/Lotus-Tmple-Photo-by-Arpan-Das-980x614.jpg',
-        'https://blog.architizer.com/wp-content/uploads/maxresdefault-3-768x508.jpg',
-      ],
-      texts: {
-        en: ['A showcase of modern design.', 'Award-winning project.'],
-        fr: ['Une vitrine du design moderne.', 'Projet primé.'],
-      },
-      createdAt: new Date('2024-05-01T10:00:00.000Z'),
-      updatedAt: new Date('2024-05-01T10:00:00.000Z'),
-    },
-    {
-      id: '664a1b2c3d4e5f6789012346',
-      title: { en: 'Classic Villa', fr: 'Villa Classique' },
-      videos: [],
-      images: [
-        'https://www.utilitydesign.co.uk/wp/wp-content/uploads/2017/06/HAC_photo_by_Iwan_Baan_2.jpg',
-      ],
-      texts: {
-        en: ['Inspired by timeless elegance.'],
-        fr: ["Inspiré par l'élégance intemporelle."],
-      },
-      createdAt: new Date('2024-05-02T12:00:00.000Z'),
-      updatedAt: new Date('2024-05-02T12:00:00.000Z'),
-    },
-  ])
+  const portfolios = ref<Array<IPortfolio>>([])
   const loading = ref<boolean>(false)
   const error = ref<null | string>()
   const _service = useServices().portfolio
@@ -62,15 +32,68 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       portfolios.value = await _service.getPortfolios()
       error.value = null
     } catch (e) {
+      console.log(e)
       errorHandler.handleError(e, { strategy: 'silent' })
     } finally {
       loading.value = false
     }
   }
 
-  async function updatePortfolio(portfolio: IPortfolio) {}
-  async function addPortfolio(portfolio: IPortfolio) {}
-  async function deletePortfolio(id: string) {}
+  async function updatePortfolio(portfolio: IPortfolio) {
+    _service.updatePortfolio(portfolio)
+
+    const index = portfolios.value.findIndex((p) => p.id === portfolio.id)
+    if (index !== -1) {
+      portfolios.value[index] = { ...portfolio, updatedAt: new Date() }
+    }
+  }
+
+  async function addPortfolio(portfolio: IPortfolioBase) {
+    const newPortfolio = {
+      ...portfolio,
+    }
+    portfolios.value.push(newPortfolio)
+  }
+
+  async function deletePortfolio(id: string) {
+    portfolios.value = portfolios.value.filter((p) => p.id !== id)
+  }
+
+  // Add uploadMedia method
+  async function uploadMedia({ id, form }: { id: string; form: FormData }) {
+    try {
+      await _service.uploadMedia({ id, form })
+      // Fetch updated portfolio and update local list
+      const updated = await _service.getPortfolio(id)
+      const index = portfolios.value.findIndex((p) => p.id === id)
+      if (index !== -1) {
+        portfolios.value[index] = updated
+      } else {
+        portfolios.value.push(updated)
+      }
+    } catch (e) {
+      errorHandler.handleError(e, { strategy: 'silent' })
+      throw e
+    }
+  }
+
+  // Add removeSingleMedia method
+  async function removeSingleMedia({ id, mediaId }: { id: string; mediaId: string }) {
+    try {
+      await _service.removeSingleMedia({ id, mediaId })
+      // Fetch updated portfolio and update local list
+      const updated = await _service.getPortfolio(id)
+      const index = portfolios.value.findIndex((p) => p.id === id)
+      if (index !== -1) {
+        portfolios.value[index] = updated
+      } else {
+        portfolios.value.push(updated)
+      }
+    } catch (e) {
+      errorHandler.handleError(e, { strategy: 'silent' })
+      throw e
+    }
+  }
 
   return {
     portfolios,
@@ -82,5 +105,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     updatePortfolio,
     addPortfolio,
     deletePortfolio,
+    uploadMedia,
+    removeSingleMedia,
   }
 })
