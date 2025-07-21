@@ -1,11 +1,45 @@
 import type { ITranslatedString, ITranslatedStrings } from '@/modules/i18n'
 
-export interface IPortfolio {
+export enum EMediaType {
+  IMAGE = 'image',
+  VIDEO = 'video',
+}
+
+export type TMediaType = `${EMediaType}`
+
+export interface Media {
+  id: string
+  path: string
+  name: string
+  index: number
+  type: TMediaType
+}
+
+export interface IPortfolioBase {
   id: string
   title: ITranslatedString
-  videos: string[]
-  images: string[]
+  media: Media[]
   texts: ITranslatedStrings
   createdAt: Date
   updatedAt: Date
+}
+
+export type IPortfolioUpdate = IPortfolioBase & {
+  id: string
+}
+
+export type IPortfolio = IPortfolioBase & {
+  id: string
+  createdAt: Date
+  updatedAt: Date
+}
+
+export interface IUploadMedia {
+  form: FormData
+  id: string
+}
+
+export interface IMediaRemove {
+  id: string
+  mediaId: string
 }
