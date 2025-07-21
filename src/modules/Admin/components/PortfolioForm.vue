@@ -50,7 +50,8 @@ function refreshPortfolio(val?: IPortfolio) {
 function save() {
   emit(
     'save',
-    props.portfolio?.id ? { ...form.value } : { texts: form.value.texts, title: form.value.title }
+    props.portfolio?.id ? { ...form.value } : { texts: form.value.texts, title: form.value.title },
+    mediaFiles.value.length ? [...mediaFiles.value] : undefined
   )
 }
 function close() {
@@ -71,7 +72,7 @@ async function uploadMedia() {
   mediaFiles.value.forEach((file) => formData.append('media', file))
   try {
     await portfolioStore.uploadMedia({ id: form.value.id, form: formData })
-    const portfolio = await portfolioStore.fetchPortfolio(form.value.id)
+    await portfolioStore.fetchPortfolio(form.value.id)
     mediaFiles.value = []
     // refreshPortfolio(portfolio)
     // Optionally show a success message here
@@ -86,7 +87,7 @@ async function removeMediaItem(mediaId: string) {
   if (!form.value.id) return
   try {
     await portfolioStore.removeSingleMedia({ id: form.value.id, mediaId })
-    const portfolio = await portfolioStore.fetchPortfolio(form.value.id)
+    await portfolioStore.fetchPortfolio(form.value.id)
     // refreshPortfolio(portfolio)
     // Optionally show a success message here
   } catch (e) {
@@ -151,35 +152,44 @@ async function saveMediaOrder() {
       </label>
       <textarea
         :id="`texts-${locale}`"
-        v-model="form.texts[locale][0]"
-        rows="3"
-        class="focus:ring-primary w-full resize-none rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
-      />
+        v-model="form.texts[locale]"
+        class="focus:ring-primary w-full rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
+      ></textarea>
     </div>
-    <div class="mb-6">
-      <label for="media-upload" class="mb-1 block font-medium text-gray-700">{{
-        $t('admin.media_label')
-      }}</label>
+    <div class="mb-4">
+      <label class="mb-1 block font-medium text-gray-700">
+        {{ $t('admin.media_label') }}
+      </label>
       <input
-        id="media-upload"
         type="file"
         multiple
         @change="onMediaChange"
-        accept="image/*,video/*"
         class="focus:ring-primary w-full rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
       />
-      <Button
-        class="bg-primary hover:bg-primary-dark mt-3 rounded px-6 py-2 font-semibold text-white shadow transition disabled:opacity-50"
-        :disabled="!mediaFiles.length || uploading"
-        @click="uploadMedia"
-      >
-        <span v-if="uploading">{{ $t('admin.uploading') }}</span>
-        <span v-else>{{ $t('admin.upload_media') }}</span>
-      </Button>
-      <div v-if="mediaFiles.length" class="mt-2 text-sm text-gray-600">
-        <div v-for="file in mediaFiles" :key="file.name">{{ file.name }}</div>
+      <div v-if="uploading" class="mt-2 text-sm text-gray-600">
+        {{ $t('admin.uploading_media') }}
       </div>
     </div>
+    <div v-if="mediaFiles.length > 0" class="mt-4">
+      <h4 class="mb-2 text-sm font-bold">{{ $t('admin.uploaded_media') }}</h4>
+      <div class="flex flex-wrap gap-2">
+        <div
+          v-for="(file, index) in mediaFiles"
+          :key="index"
+          class="flex items-center rounded-md bg-gray-100 px-3 py-1 text-sm text-gray-700"
+        >
+          {{ file.name }}
+          <button
+            type="button"
+            @click="removeMediaItem(file.name)"
+            class="ml-2 text-red-500 hover:text-red-700"
+          >
+            {{ $t('admin.remove') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="existingMedia.length" class="mb-6">
       <div class="mb-2 font-semibold text-gray-700">{{ $t('admin.existing_media') }}</div>
       <ul class="space-y-2">
@@ -224,19 +234,10 @@ async function saveMediaOrder() {
         </li>
       </ul>
     </div>
-    <div class="mt-8 flex justify-end gap-3">
-      <Button
-        @click="save"
-        class="bg-primary hover:bg-primary-dark rounded px-6 py-2 font-semibold text-white shadow transition"
-      >
-        {{ $t('admin.save') }}
-      </Button>
-      <Button
-        @click="close"
-        class="rounded bg-gray-200 px-6 py-2 font-semibold text-gray-700 transition hover:bg-gray-300"
-      >
-        {{ $t('admin.cancel') }}
-      </Button>
+
+    <div class="mt-6 flex justify-end gap-2">
+      <Button @click="close">{{ $t('admin.cancel') }}</Button>
+      <Button @click="save">{{ $t('admin.save') }}</Button>
     </div>
   </div>
 </template>

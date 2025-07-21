@@ -31,13 +31,24 @@ function openEdit(id: string) {
 function closeModal() {
   showModal.value = false
 }
-function savePortfolio(portfolio: IPortfolio | IPortfolioCreate) {
+function savePortfolio(portfolio: IPortfolio | IPortfolioCreate, mediaFiles?: File[]) {
   if ('id' in portfolio) {
     store.updatePortfolio(portfolio)
+    closeModal()
   } else {
-    store.addPortfolio(portfolio)
+    // Add portfolio, then upload media if any
+    store.addPortfolio(portfolio).then((created: IPortfolio) => {
+      if (mediaFiles && mediaFiles.length && created.id) {
+        const formData = new FormData()
+        mediaFiles.forEach((file) => formData.append('media', file))
+        store.uploadMedia({ id: created.id, form: formData }).then(() => {
+          closeModal()
+        })
+      } else {
+        closeModal()
+      }
+    })
   }
-  closeModal()
 }
 function deletePortfolio(id: string) {
   store.deletePortfolio(id)

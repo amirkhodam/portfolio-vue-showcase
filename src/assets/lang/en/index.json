@@ -38,7 +38,8 @@
     "address_ln": "Address ({lang})",
     "media_label": "Media (images/videos)",
     "upload_media": "Upload Media",
-    "uploading": "Uploading...",
+    "uploading_media": "Uploading...",
+    "uploaded_media": "Uploaded!",
     "existing_media": "Existing Media",
     "remove": "Remove"
   }

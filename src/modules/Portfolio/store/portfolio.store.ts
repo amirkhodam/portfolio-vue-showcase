@@ -11,6 +11,10 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const _service = useServices().portfolio
   const _BASE_MEDIA_URL = import.meta.env.VITE_MEDIA_ADDRESS
 
+  function resetPath(path: string) {
+    return path.replaceAll(`${_BASE_MEDIA_URL}/`, '')
+  }
+
   function getPath(path: string) {
     return `${_BASE_MEDIA_URL}/${path}`
   }
@@ -63,7 +67,10 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   }
 
   async function updatePortfolio(portfolio: IPortfolio) {
-    _service.updatePortfolio(portfolio)
+    _service.updatePortfolio({
+      ...portfolio,
+      media: portfolio.media.map((m) => ({ ...m, path: resetPath(m.path) }))
+    })
 
     const index = portfolios.value.findIndex((p) => p.id === portfolio.id)
     if (index !== -1) {
@@ -74,6 +81,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   async function addPortfolio(portfolio: IPortfolioCreate) {
     const newPortfolio = await _service.createPortfolio(portfolio)
     portfolios.value.push(newPortfolio)
+    return newPortfolio
   }
 
   async function deletePortfolio(id: string) {

@@ -38,7 +38,8 @@
     "address_ln": "Adresse ({lang})",
     "media_label": "Médias (images/vidéos)",
     "upload_media": "Téléverser des médias",
-    "uploading": "Téléversement...",
+    "uploading_media": "Téléversement...",
+    "uploaded_media": "Téléchargé!",
     "existing_media": "Médias existants",
     "remove": "Retirer"
   }
