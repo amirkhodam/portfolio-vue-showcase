@@ -25,7 +25,7 @@ const store = usePortfolioStore()
 const portfolios = computed(() => store.portfolios)
 
 onMounted(async () => {
-  // await store.fetchPortfolios()
+  await store.fetchPortfolios()
 })
 
 const loading = computed(() => store.loading)
