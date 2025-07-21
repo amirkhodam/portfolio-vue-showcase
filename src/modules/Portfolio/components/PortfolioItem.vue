@@ -25,7 +25,7 @@ function openGallery() {
     <div class="mb-2">
       <img
         v-if="portfolio.media && portfolio.media.length"
-        :src="portfolio.media[0].path"
+        :src="portfolio.media.filter((i) => i.type === 'image')[0].path"
         class="h-48 w-full cursor-pointer rounded object-cover"
         @click="openGallery"
         alt="Portfolio image"
