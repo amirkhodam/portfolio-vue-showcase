@@ -50,12 +50,14 @@ export const usePortfolioStore = defineStore('portfolio', () => {
 
   async function addPortfolio(portfolio: IPortfolioBase) {
     const newPortfolio = {
-      ...portfolio,
+      ...portfolio
     }
+    await _service.createPortfolio(newPortfolio)
     portfolios.value.push(newPortfolio)
   }
 
   async function deletePortfolio(id: string) {
+    await _service.deletePortfolio(id)
     portfolios.value = portfolios.value.filter((p) => p.id !== id)
   }
 
@@ -106,6 +108,6 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     addPortfolio,
     deletePortfolio,
     uploadMedia,
-    removeSingleMedia,
+    removeSingleMedia
   }
 })
