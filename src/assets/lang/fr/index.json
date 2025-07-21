@@ -1,10 +1,42 @@
 {
   "portfolio": {
-    "gallery": "View Gallery"
+    "gallery": "Voir la galerie"
   },
   "contact": {
     "name": "Nom",
     "email": "E-mail",
-    "message": "Message"
+    "message": "Message",
+    "name_required": "Le nom est requis.",
+    "email_required": "L'e-mail est requis.",
+    "message_required": "Le message est requis.",
+    "submit": "Envoyer",
+    "success": "Votre message a été envoyé !"
+  },
+  "admin": {
+    "login": "Connexion Admin",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "login_button": "Connexion",
+    "logout": "Déconnexion",
+    "dashboard": "Tableau de bord Admin",
+    "manage_portfolios": "Gérer les portfolios",
+    "edit_about": "Modifier À propos",
+    "edit_contact": "Modifier Contact",
+    "add_portfolio": "Ajouter un portfolio",
+    "edit_portfolio": "Modifier le portfolio",
+    "title_en": "Titre (EN)",
+    "title_fr": "Titre (FR)",
+    "texts_en": "Textes (EN)",
+    "texts_fr": "Textes (FR)",
+    "actions": "Actions",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "success": "Enregistré !",
+    "invalid_credentials": "Nom d'utilisateur ou mot de passe invalide.",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address_en": "Adresse (EN)",
+    "address_fr": "Adresse (FR)"
   }
 }

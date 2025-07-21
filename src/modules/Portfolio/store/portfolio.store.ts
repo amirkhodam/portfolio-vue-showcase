@@ -68,6 +68,10 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   }
 
+  async function updatePortfolio(portfolio: IPortfolio) {}
+  async function addPortfolio(portfolio: IPortfolio) {}
+  async function deletePortfolio(id: string) {}
+
   return {
     portfolios,
     loading,
@@ -75,5 +79,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
 
     fetchPortfolio,
     fetchPortfolios,
+    updatePortfolio,
+    addPortfolio,
+    deletePortfolio,
   }
 })
