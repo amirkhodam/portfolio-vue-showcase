@@ -97,6 +97,39 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   }
 
+  // Add saveMediaOrder method
+  async function saveMediaOrder({
+    id,
+    media
+  }: {
+    id: string
+    media: { id: string; index: number }[]
+  }) {
+    try {
+      // Find the current portfolio
+      const portfolio = portfolios.value.find((p) => p.id === id)
+      if (!portfolio) throw new Error('Portfolio not found')
+      // Map the new order to the full media objects
+      const newMediaOrder = media.map(({ id: mediaId, index }) => {
+        const m = portfolio.media.find((mm) => mm.id === mediaId)
+        if (!m) throw new Error('Media not found')
+        return { ...m, index }
+      })
+      await _service.patchPortfolio(id, { media: newMediaOrder })
+      // Fetch updated portfolio and update local list
+      const updated = await _service.getPortfolio(id)
+      const index = portfolios.value.findIndex((p) => p.id === id)
+      if (index !== -1) {
+        portfolios.value[index] = updated
+      } else {
+        portfolios.value.push(updated)
+      }
+    } catch (e) {
+      errorHandler.handleError(e, { strategy: 'silent' })
+      throw e
+    }
+  }
+
   return {
     portfolios,
     loading,
@@ -108,6 +141,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     addPortfolio,
     deletePortfolio,
     uploadMedia,
-    removeSingleMedia
+    removeSingleMedia,
+    saveMediaOrder
   }
 })

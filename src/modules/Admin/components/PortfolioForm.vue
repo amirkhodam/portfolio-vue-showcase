@@ -84,6 +84,42 @@ async function removeMediaItem(mediaId: string) {
     // Optionally show an error message here
   }
 }
+
+// Drag-and-drop state for media reordering
+const draggingIndex = ref<number | null>(null)
+const dragOverIndex = ref<number | null>(null)
+
+function onDragStart(idx: number) {
+  draggingIndex.value = idx
+}
+function onDragOver(idx: number) {
+  dragOverIndex.value = idx
+}
+function onDrop() {
+  if (draggingIndex.value === null || dragOverIndex.value === null) return
+  const arr = [...form.value.media]
+  const [moved] = arr.splice(draggingIndex.value, 1)
+  arr.splice(dragOverIndex.value, 0, moved)
+  // Update index field
+  arr.forEach((m, i) => (m.index = i))
+  form.value.media = arr
+  draggingIndex.value = null
+  dragOverIndex.value = null
+  saveMediaOrder()
+}
+function onDragEnd() {
+  draggingIndex.value = null
+  dragOverIndex.value = null
+}
+
+async function saveMediaOrder() {
+  if (!form.value.id) return
+  // Call store to persist new order
+  await portfolioStore.saveMediaOrder({
+    id: form.value.id,
+    media: form.value.media.map(({ id, index }) => ({ id, index }))
+  })
+}
 </script>
 <template>
   <div class="p-4">
@@ -139,11 +175,37 @@ async function removeMediaItem(mediaId: string) {
       <div class="mb-2 font-semibold text-gray-700">{{ $t('admin.existing_media') }}</div>
       <ul class="space-y-2">
         <li
-          v-for="media in existingMedia"
+          v-for="(media, index) in existingMedia"
           :key="media.id"
-          class="flex items-center justify-between rounded bg-gray-50 px-3 py-2"
+          draggable="true"
+          @dragstart="onDragStart(index)"
+          @dragover.prevent="onDragOver(index)"
+          @drop.prevent="onDrop"
+          @dragend="onDragEnd"
+          :class="[
+            'flex items-center justify-between rounded bg-gray-50 px-3 py-2 transition',
+            draggingIndex === index ? 'opacity-50' : '',
+            dragOverIndex === index && draggingIndex !== null && draggingIndex !== index
+              ? 'ring-primary ring-2'
+              : ''
+          ]"
         >
-          <span class="truncate text-gray-800">{{ media.name }}</span>
+          <span class="cursor-move truncate text-gray-800">
+            <svg
+              class="mr-2 inline h-4 w-4 cursor-move text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01M8 8h.01M12 8h.01M16 8h.01"
+              />
+            </svg>
+            {{ media.name }}
+          </span>
           <Button
             @click="removeMediaItem(media.id)"
             class="px-2 py-1 text-sm font-medium text-red-600 hover:underline"
