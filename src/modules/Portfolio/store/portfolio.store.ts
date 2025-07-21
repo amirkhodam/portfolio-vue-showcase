@@ -133,7 +133,9 @@ export const usePortfolioStore = defineStore('portfolio', () => {
         if (!m) throw new Error('Media not found')
         return { ...m, index }
       })
-      await _service.patchPortfolio(id, { media: newMediaOrder })
+      await _service.patchPortfolio(id, {
+        media: newMediaOrder.map((m) => ({ ...m, path: resetPath(m.path) }))
+      })
       // Fetch updated portfolio and update local list
       const updated = await _service.getPortfolio(id)
       const index = portfolios.value.findIndex((p) => p.id === id)

@@ -41,6 +41,7 @@
     "uploading_media": "Téléversement...",
     "uploaded_media": "Téléchargé!",
     "existing_media": "Médias existants",
-    "remove": "Retirer"
+    "remove": "Retirer",
+    "add_text": "Ajouter un texte"
   }
 }

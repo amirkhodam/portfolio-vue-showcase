@@ -150,11 +150,34 @@ async function saveMediaOrder() {
       <label :for="`texts-${locale}`" class="mb-1 block font-medium text-gray-700">
         {{ $t('admin.texts_ln', { lang: locale.toUpperCase() }) }}
       </label>
-      <textarea
-        :id="`texts-${locale}`"
-        v-model="form.texts[locale]"
-        class="focus:ring-primary w-full rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
-      ></textarea>
+      <div
+        v-for="(text, idx) in form.texts[locale]"
+        :key="`text-${locale}-${idx}`"
+        class="mb-2 flex items-center gap-2"
+      >
+        <textarea
+          :id="`texts-${locale}-${idx}`"
+          v-model="form.texts[locale][idx]"
+          rows="2"
+          class="focus:ring-primary w-full resize-none rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
+        />
+        <Button
+          v-if="form.texts[locale].length > 1"
+          @click="form.texts[locale].splice(idx, 1)"
+          class="px-2 py-1 text-sm font-medium text-red-600 hover:underline"
+          type="button"
+          severity="danger"
+        >
+          {{ $t('admin.remove') }}
+        </Button>
+      </div>
+      <Button
+        @click="form.texts[locale].push('')"
+        class="text-primary px-2 py-1 text-sm font-medium hover:underline"
+        type="button"
+      >
+        {{ $t('admin.add_text') }}
+      </Button>
     </div>
     <div class="mb-4">
       <label class="mb-1 block font-medium text-gray-700">
@@ -179,13 +202,14 @@ async function saveMediaOrder() {
           class="flex items-center rounded-md bg-gray-100 px-3 py-1 text-sm text-gray-700"
         >
           {{ file.name }}
-          <button
+          <Button
             type="button"
             @click="removeMediaItem(file.name)"
             class="ml-2 text-red-500 hover:text-red-700"
+            severity="danger"
           >
             {{ $t('admin.remove') }}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -228,6 +252,7 @@ async function saveMediaOrder() {
           <Button
             @click="removeMediaItem(media.id)"
             class="px-2 py-1 text-sm font-medium text-red-600 hover:underline"
+            severity="danger"
           >
             {{ $t('admin.remove') }}
           </Button>
@@ -236,7 +261,7 @@ async function saveMediaOrder() {
     </div>
 
     <div class="mt-6 flex justify-end gap-2">
-      <Button @click="close">{{ $t('admin.cancel') }}</Button>
+      <Button @click="close" severity="secondary">{{ $t('admin.cancel') }}</Button>
       <Button @click="save">{{ $t('admin.save') }}</Button>
     </div>
   </div>

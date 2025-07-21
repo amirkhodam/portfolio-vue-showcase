@@ -41,6 +41,7 @@
     "uploading_media": "Uploading...",
     "uploaded_media": "Uploaded!",
     "existing_media": "Existing Media",
-    "remove": "Remove"
+    "remove": "Remove",
+    "add_text": "Add Text"
   }
 }
