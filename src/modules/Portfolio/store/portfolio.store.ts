@@ -9,6 +9,32 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const loading = ref<boolean>(false)
   const error = ref<null | string>()
   const _service = useServices().portfolio
+  const _BASE_MEDIA_URL = import.meta.env.VITE_MEDIA_ADDRESS
+
+  function getPath(path: string) {
+    return `${_BASE_MEDIA_URL}/${path}`
+  }
+
+  function serializePortfolio(portfolio: IPortfolio): IPortfolio {
+    return {
+      ...portfolio,
+      media: portfolio.media.map((m) => ({ ...m, path: getPath(m.path) }))
+    }
+  }
+
+  function setPortfolios(list: Array<IPortfolio>): void {
+    portfolios.value = list.map(serializePortfolio)
+  }
+
+  function replacePortfolio(portfolio: IPortfolio): void {
+    const id = portfolio.id
+    const index = portfolios.value.findIndex((p) => p.id === id)
+    if (index !== -1) {
+      portfolios.value[index] = serializePortfolio(portfolio)
+    } else {
+      portfolios.value.push(serializePortfolio(portfolio))
+    }
+  }
 
   async function fetchPortfolio(id: string) {
     try {
@@ -29,7 +55,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   async function fetchPortfolios() {
     loading.value = true
     try {
-      portfolios.value = await _service.getPortfolios()
+      const portfolios = await _service.getPortfolios()
+      setPortfolios(portfolios)
       error.value = null
     } catch (e) {
       console.log(e)
@@ -67,12 +94,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       await _service.uploadMedia({ id, form })
       // Fetch updated portfolio and update local list
       const updated = await _service.getPortfolio(id)
-      const index = portfolios.value.findIndex((p) => p.id === id)
-      if (index !== -1) {
-        portfolios.value[index] = updated
-      } else {
-        portfolios.value.push(updated)
-      }
+      replacePortfolio(updated)
     } catch (e) {
       errorHandler.handleError(e, { strategy: 'silent' })
       throw e
@@ -85,12 +107,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       await _service.removeSingleMedia({ id, mediaId })
       // Fetch updated portfolio and update local list
       const updated = await _service.getPortfolio(id)
-      const index = portfolios.value.findIndex((p) => p.id === id)
-      if (index !== -1) {
-        portfolios.value[index] = updated
-      } else {
-        portfolios.value.push(updated)
-      }
+      replacePortfolio(updated)
     } catch (e) {
       errorHandler.handleError(e, { strategy: 'silent' })
       throw e
