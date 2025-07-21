@@ -17,7 +17,7 @@ const form = ref<{
   id: '',
   title: { en: '', fr: '' },
   media: [],
-  texts: { en: [''], fr: [''] },
+  texts: { en: [''], fr: [''] }
 })
 
 const portfolioStore = usePortfolioStore()
@@ -37,10 +37,10 @@ watch(
         id: '',
         title: { en: '', fr: '' },
         media: [],
-        texts: { en: [''], fr: [''] },
+        texts: { en: [''], fr: [''] }
       }
   },
-  { immediate: true },
+  { immediate: true }
 )
 
 function save() {
@@ -90,38 +90,41 @@ async function removeMediaItem(mediaId: string) {
     <h3 class="mb-2 text-lg font-bold">
       {{ form.id ? $t('admin.edit_portfolio') : $t('admin.add_portfolio') }}
     </h3>
-    <div v-for="locale in $i18n.availableLocales" :key="`title-${locale}`" class="mb-2">
-      <label :for="`title-${locale}`">{{
-        $t('admin.title_ln', { lang: locale.toUpperCase() })
-      }}</label>
+    <div v-for="locale in $i18n.availableLocales" :key="`title-${locale}`" class="mb-4">
+      <label :for="`title-${locale}`" class="mb-1 block font-medium text-gray-700">
+        {{ $t('admin.title_ln', { lang: locale.toUpperCase() }) }}
+      </label>
       <input
         :id="`title-${locale}`"
         v-model="form.title[locale]"
-        class="w-full rounded border px-2 py-1"
+        class="focus:ring-primary w-full rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
       />
     </div>
-    <div v-for="locale in $i18n.availableLocales" :key="`texts-${locale}`" class="mb-2">
-      <label :for="`texts-${locale}`">{{
-        $t('admin.texts_ln', { lang: locale.toUpperCase() })
-      }}</label>
+    <div v-for="locale in $i18n.availableLocales" :key="`texts-${locale}`" class="mb-4">
+      <label :for="`texts-${locale}`" class="mb-1 block font-medium text-gray-700">
+        {{ $t('admin.texts_ln', { lang: locale.toUpperCase() }) }}
+      </label>
       <textarea
         :id="`texts-${locale}`"
         v-model="form.texts[locale][0]"
-        class="w-full rounded border px-2 py-1"
+        rows="3"
+        class="focus:ring-primary w-full resize-none rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
       />
     </div>
-    <div class="mb-2">
-      <label for="media-upload">{{ $t('admin.media_label') }}</label>
+    <div class="mb-6">
+      <label for="media-upload" class="mb-1 block font-medium text-gray-700">{{
+        $t('admin.media_label')
+      }}</label>
       <input
         id="media-upload"
         type="file"
         multiple
         @change="onMediaChange"
         accept="image/*,video/*"
-        class="w-full rounded border px-2 py-1"
+        class="focus:ring-primary w-full rounded border border-gray-300 px-3 py-2 transition focus:border-transparent focus:ring-2 focus:outline-none"
       />
       <Button
-        class="bg-primary mt-2 rounded px-4 py-2 text-white disabled:opacity-50"
+        class="bg-primary hover:bg-primary-dark mt-3 rounded px-6 py-2 font-semibold text-white shadow transition disabled:opacity-50"
         :disabled="!mediaFiles.length || uploading"
         @click="uploadMedia"
       >
@@ -132,20 +135,37 @@ async function removeMediaItem(mediaId: string) {
         <div v-for="file in mediaFiles" :key="file.name">{{ file.name }}</div>
       </div>
     </div>
-    <div v-if="existingMedia.length" class="mb-2">
-      <div class="mb-1 font-semibold">{{ $t('admin.existing_media') }}</div>
-      <div v-for="media in existingMedia" :key="media.id" class="mb-1 flex items-center gap-2">
-        <span>{{ media.name }}</span>
-        <Button @click="removeMediaItem(media.id)" class="text-red-500 hover:underline">
-          {{ $t('admin.remove') }}
-        </Button>
-      </div>
+    <div v-if="existingMedia.length" class="mb-6">
+      <div class="mb-2 font-semibold text-gray-700">{{ $t('admin.existing_media') }}</div>
+      <ul class="space-y-2">
+        <li
+          v-for="media in existingMedia"
+          :key="media.id"
+          class="flex items-center justify-between rounded bg-gray-50 px-3 py-2"
+        >
+          <span class="truncate text-gray-800">{{ media.name }}</span>
+          <Button
+            @click="removeMediaItem(media.id)"
+            class="px-2 py-1 text-sm font-medium text-red-600 hover:underline"
+          >
+            {{ $t('admin.remove') }}
+          </Button>
+        </li>
+      </ul>
     </div>
-    <div class="mt-4 flex gap-2">
-      <Button @click="save" class="rounded px-4 py-2">
+    <div class="mt-8 flex justify-end gap-3">
+      <Button
+        @click="save"
+        class="bg-primary hover:bg-primary-dark rounded px-6 py-2 font-semibold text-white shadow transition"
+      >
         {{ $t('admin.save') }}
       </Button>
-      <Button @click="close" class="rounded bg-gray-300 px-4 py-2">{{ $t('admin.cancel') }}</Button>
+      <Button
+        @click="close"
+        class="rounded bg-gray-200 px-6 py-2 font-semibold text-gray-700 transition hover:bg-gray-300"
+      >
+        {{ $t('admin.cancel') }}
+      </Button>
     </div>
   </div>
 </template>
