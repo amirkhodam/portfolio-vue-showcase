@@ -7,6 +7,7 @@ import { computed, ref, watch } from 'vue'
 export interface ServiceConfig {
   subdomain: string
   path?: string
+  prefix?: string // Optional prefix to prepend to the path
 }
 
 export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
@@ -17,21 +18,45 @@ export const SERVICE_CONFIGS: Record<string, ServiceConfig> = {
 //   authentication: { subdomain: 'https://example.com/' }, // Auth service path
 // }
 
-const getServiceBaseUrl = (baseURL: string, serviceName: string): string => {
+function getServiceBaseUrl(envDomain: string, serviceName: string, prefix: string = ''): string {
+  const domain = envDomain
   const config = SERVICE_CONFIGS[serviceName]
+  // Helper to clean and join path segments
+
+  const joinPath = (...segments: (string | undefined)[]) =>
+    '/' +
+    segments
+      .filter(Boolean)
+      .map((s) => s!.replace(/^\/+|\/+$/g, ''))
+      .filter(Boolean)
+      .join('/')
+
+  // Compose the path: [prefix argument] -> [config.prefix] -> [config.path or base path]
+  const pathSegments = [prefix, config?.prefix, config?.path ? config.path : undefined].filter(
+    Boolean
+  )
+
   try {
     const configUrl = new URL(config.subdomain)
-    const baseUrl = new URL(baseURL)
-    return `${configUrl}${baseUrl.pathname}`
+    const baseUrl = domain ? new URL(domain) : ''
+    if (!config?.path) pathSegments[pathSegments.length - 1] = baseUrl ? baseUrl.pathname : ''
+    const finalPath = joinPath(...pathSegments)
+    return `${configUrl.origin}${finalPath}`
   } catch (error) {
-    if (!config) return baseURL
-
-    const url = new URL(baseURL)
-    url.hostname = `${config.subdomain}.${url.hostname}`
-    if (config.path) {
-      url.pathname = config.path
+    // If no config, still add prefix to the domain's path
+    if (domain) {
+      const url = new URL(domain)
+      if (!config) {
+        const path = joinPath(prefix, url.pathname)
+        return `${url.origin}${path}`
+      }
+      url.hostname = `${config.subdomain}.${url.hostname}`
+      if (!config?.path) pathSegments[pathSegments.length - 1] = url.pathname
+      url.pathname = joinPath(...pathSegments)
+      return url.toString()
+    } else {
+      return joinPath(...pathSegments)
     }
-    return url.toString()
   }
 }
 
@@ -63,7 +88,7 @@ export class ApiClient {
         window.removeEventListener('beforeunload', beforeUnloadHandler)
       }
     },
-    { immediate: true },
+    { immediate: true }
   )
 
   protected adaptors: Map<string, AxiosInstance>
@@ -83,7 +108,7 @@ export class ApiClient {
 
   protected getAdaptor(serviceName: string): AxiosInstance {
     if (!this.adaptors.has(serviceName)) {
-      const serviceBaseUrl = getServiceBaseUrl(this.baseURL, serviceName)
+      const serviceBaseUrl = getServiceBaseUrl(this.baseURL, serviceName, 'api')
       this.adaptors.set(serviceName, axios.create({ baseURL: serviceBaseUrl }))
     }
     return this.adaptors.get(serviceName)!
