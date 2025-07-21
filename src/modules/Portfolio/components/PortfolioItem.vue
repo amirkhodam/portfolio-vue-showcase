@@ -24,8 +24,8 @@ function openGallery() {
     <h2 class="mb-2 text-xl font-bold">{{ useTranslatedString(portfolio.title) }}</h2>
     <div class="mb-2">
       <img
-        v-if="portfolio.images && portfolio.images.length"
-        :src="portfolio.images[0]"
+        v-if="portfolio.media && portfolio.media.length"
+        :src="portfolio.media[0].path"
         class="h-48 w-full cursor-pointer rounded object-cover"
         @click="openGallery"
         alt="Portfolio image"
@@ -37,17 +37,12 @@ function openGallery() {
       </p>
     </div>
     <button
-      v-if="portfolio.videos && portfolio.videos.length"
+      v-if="portfolio.media && portfolio.media.length"
       class="bg-primary mt-2 rounded px-4 py-2 text-white"
       @click="openGallery"
     >
       {{ $t('portfolio.gallery') }}
     </button>
-    <gallery-show
-      v-model="showGallery"
-      :images="portfolio.images"
-      :videos="portfolio.videos"
-      @close="showGallery = false"
-    />
+    <gallery-show v-model="showGallery" :medias="portfolio.media" @close="showGallery = false" />
   </div>
 </template>
