@@ -26,28 +26,25 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     portfolios.value = list.map(serializePortfolio)
   }
 
-  function replacePortfolio(portfolio: IPortfolio): void {
+  function replacePortfolio(portfolio: IPortfolio): IPortfolio {
     const id = portfolio.id
+    const serialized = serializePortfolio(portfolio)
     const index = portfolios.value.findIndex((p) => p.id === id)
     if (index !== -1) {
-      portfolios.value[index] = serializePortfolio(portfolio)
+      portfolios.value[index] = serialized
     } else {
-      portfolios.value.push(serializePortfolio(portfolio))
+      portfolios.value.push(serialized)
     }
+    return serialized
   }
 
   async function fetchPortfolio(id: string) {
     try {
       const portfolio = await _service.getPortfolio(id)
-      const index = portfolios.value.findIndex((p) => p.id === portfolio.id)
-      if (index !== -1) {
-        portfolios.value[index] = portfolio
-      } else {
-        portfolios.value.push(portfolio)
-      }
       error.value = null
+      return replacePortfolio(portfolio)
     } catch (e) {
-      errorHandler.handleError(e, { strategy: 'silent' })
+      errorHandler.handleError(e, { strategy: 'console' })
     } finally {
     }
   }
@@ -59,8 +56,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
       setPortfolios(portfolios)
       error.value = null
     } catch (e) {
-      console.log(e)
-      errorHandler.handleError(e, { strategy: 'silent' })
+      errorHandler.handleError(e, { strategy: 'console' })
     } finally {
       loading.value = false
     }

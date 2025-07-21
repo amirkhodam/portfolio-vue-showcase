@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { usePortfolioStore } from '@/modules/Portfolio/store/portfolio.store'
-import { useServices } from '@/modules/api'
-import type { Media } from '@/modules/api/services/portfolio/portfolio.interface'
+import type { IPortfolio, Media } from '@/modules/api/services/portfolio/portfolio.interface'
 import Button from '@/components/button/Button.vue'
 
-const props = defineProps<{ portfolio?: any }>()
+const props = defineProps<{ portfolio?: IPortfolio }>()
 const emit = defineEmits(['save', 'close'])
 
 const form = ref<{
@@ -21,7 +20,6 @@ const form = ref<{
 })
 
 const portfolioStore = usePortfolioStore()
-const portfolioService = useServices().portfolio
 
 const mediaFiles = ref<File[]>([])
 const uploading = ref(false)
@@ -31,17 +29,23 @@ const existingMedia = computed<Media[]>(() => form.value.media || [])
 watch(
   () => props.portfolio,
   (val) => {
-    if (val) form.value = { ...val }
-    else
-      form.value = {
-        id: '',
-        title: { en: '', fr: '' },
-        media: [],
-        texts: { en: [''], fr: [''] }
-      }
+    refreshPortfolio(val)
   },
-  { immediate: true }
+  { immediate: true, deep: true }
 )
+
+function refreshPortfolio(val?: IPortfolio) {
+  if (val) {
+    form.value = { ...val }
+  } else {
+    form.value = {
+      id: '',
+      title: { en: '', fr: '' },
+      media: [],
+      texts: { en: [''], fr: [''] }
+    }
+  }
+}
 
 function save() {
   emit('save', { ...form.value })
@@ -64,8 +68,9 @@ async function uploadMedia() {
   mediaFiles.value.forEach((file) => formData.append('media', file))
   try {
     await portfolioStore.uploadMedia({ id: form.value.id, form: formData })
-    await portfolioStore.fetchPortfolio(form.value.id)
+    const portfolio = await portfolioStore.fetchPortfolio(form.value.id)
     mediaFiles.value = []
+    // refreshPortfolio(portfolio)
     // Optionally show a success message here
   } catch (e) {
     // Optionally show an error message here
@@ -78,7 +83,8 @@ async function removeMediaItem(mediaId: string) {
   if (!form.value.id) return
   try {
     await portfolioStore.removeSingleMedia({ id: form.value.id, mediaId })
-    await portfolioStore.fetchPortfolio(form.value.id)
+    const portfolio = await portfolioStore.fetchPortfolio(form.value.id)
+    // refreshPortfolio(portfolio)
     // Optionally show a success message here
   } catch (e) {
     // Optionally show an error message here

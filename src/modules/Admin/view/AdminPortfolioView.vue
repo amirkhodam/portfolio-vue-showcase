@@ -12,16 +12,20 @@ const store = usePortfolioStore()
 const portfolios = computed(() => store.portfolios)
 
 const showModal = ref<boolean>(false)
-const selectedPortfolio = ref<IPortfolio | null>(null)
+const selectedPortfolioId = ref<string | null>(null)
+
+const selectedPortfolio = computed(() =>
+  portfolios.value.find((p) => p.id === selectedPortfolioId.value)
+)
 
 onMounted(async () => await store.fetchPortfolios())
 
 function openAdd() {
-  selectedPortfolio.value = null
+  selectedPortfolioId.value = null
   showModal.value = true
 }
-function openEdit(portfolio: IPortfolio) {
-  selectedPortfolio.value = { ...portfolio }
+function openEdit(id: string) {
+  selectedPortfolioId.value = id
   showModal.value = true
 }
 function closeModal() {
@@ -65,7 +69,7 @@ function deletePortfolio(id: string) {
       <Column :header="$t('admin.actions')" class="max-w-24">
         <template #body="{ data }">
           <Button
-            @click="openEdit(data)"
+            @click="openEdit(data.id)"
             class="mr-2 inline-flex items-center gap-1 hover:underline"
           >
             <i class="pi pi-pencil"></i>
@@ -82,7 +86,7 @@ function deletePortfolio(id: string) {
         </template>
       </Column>
     </DataTable>
-    <DialogCenter v-model:visible="showModal">
+    <DialogCenter v-if="selectedPortfolio" v-model:visible="showModal">
       <PortfolioForm :portfolio="selectedPortfolio" @save="savePortfolio" @close="closeModal" />
     </DialogCenter>
   </div>
