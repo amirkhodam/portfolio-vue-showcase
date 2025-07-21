@@ -23,4 +23,34 @@ export default [
     name: 'Contact',
     component: () => import('@/modules/Contact/view/ContactView.vue'),
   },
+  // Admin routes
+  {
+    path: '/admin/login',
+    name: 'AdminLogin',
+    component: () => import('@/modules/Admin/view/AdminLoginView.vue'),
+  },
+  {
+    path: '/admin',
+    name: 'AdminDashboard',
+    component: () => import('@/modules/Admin/view/AdminDashboardView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/portfolios',
+    name: 'AdminPortfolios',
+    component: () => import('@/modules/Admin/view/AdminPortfolioView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/about',
+    name: 'AdminAbout',
+    component: () => import('@/modules/Admin/view/AdminAboutUsView.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin/contact',
+    name: 'AdminContact',
+    component: () => import('@/modules/Admin/view/AdminContactView.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
